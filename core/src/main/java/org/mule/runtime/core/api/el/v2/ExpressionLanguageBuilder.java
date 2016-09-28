@@ -6,13 +6,8 @@
  */
 package org.mule.runtime.core.api.el.v2;
 
-import com.sun.org.apache.xalan.internal.extensions.ExpressionContext;
+public interface ExpressionLanguageBuilder {
 
-public interface ExpressionLanguageV2
-{
-
-    BindingContext getGlobalBindingContext();
-
-    ExpressionContext newExpressionContext();
+  BindingContext getGlobalBindingContext();
 
 }

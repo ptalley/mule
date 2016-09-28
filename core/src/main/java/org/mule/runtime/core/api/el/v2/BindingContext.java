@@ -6,11 +6,38 @@
  */
 package org.mule.runtime.core.api.el.v2;
 
-import org.mule.metadata.api.model.MetadataType;
+import org.mule.runtime.api.metadata.TypedValue;
 
-public interface BindingContext
-{
+import java.util.Collection;
+import java.util.Optional;
 
-    void addBinding(String identifier, MetadataType metadataType, Object value);
+/**
+ * Contains all the binding definitions required by the EL.
+ *
+ * @since 4.0
+ */
+public interface BindingContext {
+
+  /**
+   * Returns all bindings found.
+   *
+   * @return a {@link Collection} of all {@link Binding}s in the context
+   */
+  Collection<Binding> bindings();
+
+  /**
+   * Returns all identifiers found.
+   *
+   * @return a {@link Collection} of all binding identifiers in the context
+   */
+  Collection<String> identifiers();
+
+  /**
+   * Allows searching for a specific binding by its identifier.
+   *
+   * @param identifier the variable or function name to lookup
+   * @return an {@link Optional} of the associated {@link TypedValue} found or an empty one.
+   */
+  Optional<TypedValue> lookup(String identifier);
 
 }

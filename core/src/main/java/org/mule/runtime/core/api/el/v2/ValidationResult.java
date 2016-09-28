@@ -6,10 +6,20 @@
  */
 package org.mule.runtime.core.api.el.v2;
 
-public interface ExpressionExecutorBuilder {
+import java.util.Optional;
 
-  ExpressionExecutorBuilder addBindingContext(BindingContext bindingContext);
+public interface ValidationResult {
 
-  ExpressionExecutor build();
+  /**
+   *
+   * @return an optional representing the validation error or an empty one
+   */
+  Optional<String> errorMessage();
+
+  /**
+   *
+   * @return true if the validation was ok, false otherwise
+   */
+  boolean success();
 
 }

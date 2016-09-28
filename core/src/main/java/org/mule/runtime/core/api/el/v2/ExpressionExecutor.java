@@ -6,23 +6,41 @@
  */
 package org.mule.runtime.core.api.el.v2;
 
-import org.mule.metadata.api.model.MetadataType;
+import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.TypedValue;
 
-public interface ExpressionExecutor
-{
+/**
+ * Evaluates an expression considering a given context.
+ *
+ * @since 4.0
+ */
+public interface ExpressionExecutor {
 
-    /**
-     * @param expression the EL expression
-     * @return the result of the expression plus its type
-     */
-    TypedValue executeExpression(String expression);
+  /**
+   * Evaluates an expression according to a given {@link BindingContext}
+   *
+   * @param expression the EL expression
+   * @param context the current binding execution context to consider
+   * @return the result of the expression plus its type
+   */
+  TypedValue evaluate(String expression, BindingContext context);
 
-    /**
-     * @param expression the EL expression
-     * @param expectedOutputType the expected output type so dataweave can do automatic conversion for the expected value type.
-     * @return the result of the expression plus its type
-     */
-    TypedValue executeExpression(String expression, MetadataType expectedOutputType);
+  /**
+   * Evaluates an expression according to a given {@link BindingContext} and the {@link DataType} of the expected result.
+   *
+   * @param expression the EL expression
+   * @param expectedOutputType the expected output type so that the EL can do automatic conversion for the resulting value type.
+   * @param context the current expression execution context to consider
+   * @return the result of the expression plus its type
+   */
+  TypedValue evaluate(String expression, DataType expectedOutputType, BindingContext context);
+
+  /**
+   * Verifies whether an expression is valid or not.
+   *
+   * @param expression to be validated
+   * @return a {@link ValidationResult} indicating whether the validation was successful or not
+   */
+  ValidationResult validate(String expression);
 
 }

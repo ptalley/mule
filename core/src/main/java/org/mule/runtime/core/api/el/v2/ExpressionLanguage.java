@@ -6,10 +6,11 @@
  */
 package org.mule.runtime.core.api.el.v2;
 
-public interface ExpressionExecutorBuilder {
+/**
+ * TODO: Do we need this? Can't see what it adds that the Executor doesn't. Might be internal to us.
+ */
+public interface ExpressionLanguage {
 
-  ExpressionExecutorBuilder addBindingContext(BindingContext bindingContext);
 
-  ExpressionExecutor build();
 
 }
