@@ -7,15 +7,26 @@
 
 package org.mule.functional.junit4;
 
+import static org.mule.runtime.core.config.bootstrap.ClassPathRegistryBootstrapDiscoverer.BOOTSTRAP_PROPERTIES;
 import static org.mule.test.runner.utils.AnnotationUtils.getAnnotationAttributeFrom;
+import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.config.ConfigurationBuilder;
+import org.mule.runtime.core.config.bootstrap.BootstrapService;
+import org.mule.runtime.core.config.bootstrap.BootstrapServiceDiscoverer;
+import org.mule.runtime.core.config.bootstrap.PropertiesBootstrapService;
+import org.mule.runtime.core.config.bootstrap.PropertiesBootstrapServiceDiscoverer;
+import org.mule.runtime.core.config.builders.AbstractConfigurationBuilder;
+import org.mule.runtime.core.util.PropertiesUtils;
 import org.mule.runtime.module.artifact.classloader.ArtifactClassLoader;
 import org.mule.test.runner.ArtifactClassLoaderRunner;
 import org.mule.test.runner.PluginClassLoadersAware;
 import org.mule.test.runner.RunnerDelegateTo;
 import org.mule.test.runner.api.IsolatedClassLoaderExtensionsManagerConfigurationBuilder;
 
+import java.net.URL;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 import org.junit.runner.RunWith;
 
@@ -93,7 +104,53 @@ public abstract class ArtifactFunctionalTestCase extends FunctionalTestCase {
     }
 
     if (pluginClassLoaders != null && !pluginClassLoaders.isEmpty()) {
+      builders.add(0, new BootstrapServiceContextBuilder(pluginClassLoaders));
       builders.add(0, new IsolatedClassLoaderExtensionsManagerConfigurationBuilder(pluginClassLoaders));
+    }
+  }
+
+  private static class BootstrapServiceContextBuilder extends AbstractConfigurationBuilder {
+
+    private final List<ArtifactClassLoader> pluginClassLoaders;
+
+    public BootstrapServiceContextBuilder(List<ArtifactClassLoader> pluginClassLoaders) {
+      this.pluginClassLoaders = pluginClassLoaders;
+    }
+
+    @Override
+    protected void doConfigure(MuleContext muleContext) throws Exception {
+      final PropertiesBootstrapServiceDiscoverer propertiesBootstrapServiceDiscoverer =
+          new PropertiesBootstrapServiceDiscoverer(this.getClass().getClassLoader());
+
+      List<BootstrapService> bootstrapServices = new LinkedList<>();
+      bootstrapServices.addAll(propertiesBootstrapServiceDiscoverer.discover());
+      for (Object pluginClassLoader : pluginClassLoaders) {
+
+        ClassLoader classLoader =
+            (ClassLoader) pluginClassLoader.getClass().getMethod("getClassLoader").invoke(pluginClassLoader);
+        final URL localResource =
+            (URL) classLoader.getClass().getMethod("getResource", String.class).invoke(classLoader, BOOTSTRAP_PROPERTIES);
+
+        //final URL localResource = pluginClassLoader.findLocalResource(findLocalResource);
+
+        if (localResource != null) {
+          final Properties properties = PropertiesUtils.loadProperties(localResource);
+          final BootstrapService pluginBootstrapService =
+              new PropertiesBootstrapService(classLoader, properties);
+
+          bootstrapServices.add(pluginBootstrapService);
+        }
+      }
+
+      BootstrapServiceDiscoverer bootstrapServiceDiscoverer = new BootstrapServiceDiscoverer() {
+
+        @Override
+        public List<BootstrapService> discover() {
+          return bootstrapServices;
+        }
+      };
+
+      muleContext.setBootstrapServiceDiscoverer(bootstrapServiceDiscoverer);
     }
   }
 

@@ -6,7 +6,6 @@
  */
 package org.mule.extension.db.internal;
 
-import org.mule.extension.db.api.StatementStreamingResultSetCloser;
 import org.mule.extension.db.api.param.BulkQueryDefinition;
 import org.mule.extension.db.api.param.JdbcType;
 import org.mule.extension.db.api.param.QueryDefinition;
@@ -44,8 +43,7 @@ import java.util.List;
     MySqlConnectionProvider.class})
 @Xml(namespace = "db")
 @Export(classes = {StatementStreamingResultSetCloser.class, QueryDefinition.class, StoredProcedureCall.class,
-    BulkQueryDefinition.class},
-    resources = {"/META-INF/services/org/mule/runtime/core/config/registry-bootstrap.properties"})
+    BulkQueryDefinition.class})
 public class DbConnector implements Initialisable {
 
   private DbTypeManager typeManager;

@@ -409,5 +409,8 @@ public interface MuleContext extends Lifecycle {
    *         artifact.
    */
   ErrorTypeRepository getErrorTypeRepository();
+
+  //TODO(pablo.kraan): bootstrap - add javadoc
+  void setBootstrapServiceDiscoverer(BootstrapServiceDiscoverer bootstrapServiceDiscoverer);
 }
 
