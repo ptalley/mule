@@ -19,6 +19,7 @@ import org.mule.runtime.core.config.builders.AbstractConfigurationBuilder;
 import org.mule.runtime.core.util.PropertiesUtils;
 import org.mule.runtime.module.artifact.classloader.ArtifactClassLoader;
 import org.mule.test.runner.ArtifactClassLoaderRunner;
+import org.mule.test.runner.ContainerClassLoaderAware;
 import org.mule.test.runner.PluginClassLoadersAware;
 import org.mule.test.runner.RunnerDelegateTo;
 import org.mule.test.runner.api.IsolatedClassLoaderExtensionsManagerConfigurationBuilder;
@@ -65,6 +66,7 @@ import org.junit.runner.RunWith;
 public abstract class ArtifactFunctionalTestCase extends FunctionalTestCase {
 
   private static List<ArtifactClassLoader> pluginClassLoaders;
+  private static ClassLoader containerClassLoader;
 
   /**
    * @return thread context class loader has to be the application {@link ClassLoader} created by the runner.
@@ -86,6 +88,19 @@ public abstract class ArtifactFunctionalTestCase extends FunctionalTestCase {
     pluginClassLoaders = artifactClassLoaders;
   }
 
+  @ContainerClassLoaderAware
+  private static final void setContainerClassLoader(ClassLoader containerClassLoader) {
+    if (containerClassLoader == null) {
+      throw new IllegalArgumentException("A null value cannot be set as the container classLoader");
+    }
+
+    if (ArtifactFunctionalTestCase.containerClassLoader != null) {
+      throw new IllegalStateException("Plugin class loaders were already set, it cannot be set again");
+    }
+
+    ArtifactFunctionalTestCase.containerClassLoader = containerClassLoader;
+  }
+
 
   /**
    * Adds a {@link ConfigurationBuilder} that sets the {@link org.mule.runtime.extension.api.ExtensionManager} into the
@@ -104,23 +119,25 @@ public abstract class ArtifactFunctionalTestCase extends FunctionalTestCase {
     }
 
     if (pluginClassLoaders != null && !pluginClassLoaders.isEmpty()) {
-      builders.add(0, new BootstrapServiceContextBuilder(pluginClassLoaders));
+      builders.add(0, new BootstrapServiceContextBuilder(containerClassLoader, pluginClassLoaders));
       builders.add(0, new IsolatedClassLoaderExtensionsManagerConfigurationBuilder(pluginClassLoaders));
     }
   }
 
   private static class BootstrapServiceContextBuilder extends AbstractConfigurationBuilder {
 
+    private final ClassLoader containerClassLoader;
     private final List<ArtifactClassLoader> pluginClassLoaders;
 
-    public BootstrapServiceContextBuilder(List<ArtifactClassLoader> pluginClassLoaders) {
+    public BootstrapServiceContextBuilder(ClassLoader containerClassLoader, List<ArtifactClassLoader> pluginClassLoaders) {
+      this.containerClassLoader = containerClassLoader;
       this.pluginClassLoaders = pluginClassLoaders;
     }
 
     @Override
     protected void doConfigure(MuleContext muleContext) throws Exception {
       final PropertiesBootstrapServiceDiscoverer propertiesBootstrapServiceDiscoverer =
-          new PropertiesBootstrapServiceDiscoverer(this.getClass().getClassLoader());
+          new PropertiesBootstrapServiceDiscoverer(containerClassLoader);
 
       List<BootstrapService> bootstrapServices = new LinkedList<>();
       bootstrapServices.addAll(propertiesBootstrapServiceDiscoverer.discover());
@@ -129,7 +146,7 @@ public abstract class ArtifactFunctionalTestCase extends FunctionalTestCase {
         ClassLoader classLoader =
             (ClassLoader) pluginClassLoader.getClass().getMethod("getClassLoader").invoke(pluginClassLoader);
         final URL localResource =
-            (URL) classLoader.getClass().getMethod("getResource", String.class).invoke(classLoader, BOOTSTRAP_PROPERTIES);
+            (URL) classLoader.getClass().getMethod("findResource", String.class).invoke(classLoader, BOOTSTRAP_PROPERTIES);
 
         //final URL localResource = pluginClassLoader.findLocalResource(findLocalResource);
 

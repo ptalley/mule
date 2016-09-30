@@ -20,6 +20,11 @@ public class ValidationElFunctionalTestCase extends ValidationTestCase {
     return "expression-language-validator.xml";
   }
 
+  @Override
+  public int getTestTimeoutSecs() {
+    return 120000;
+  }
+
   @Test
   public void byClassInstanceReused() throws Exception {
     final Event response = flowRunner("validationExpressionLanguage").withPayload("foo@bar.com").run();

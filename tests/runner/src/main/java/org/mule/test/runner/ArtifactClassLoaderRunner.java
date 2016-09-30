@@ -31,6 +31,7 @@ import com.google.common.collect.Sets;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -139,8 +140,10 @@ public class ArtifactClassLoaderRunner extends Runner implements Filterable {
 
     if (!pluginClassLoadersInjected) {
       injectPluginsClassLoaders(artifactClassLoaderHolder, isolatedTestClass);
+      injectContainerClassLoader(artifactClassLoaderHolder, isolatedTestClass);
       pluginClassLoadersInjected = true;
     }
+
   }
 
   /**
@@ -305,6 +308,39 @@ public class ArtifactClassLoaderRunner extends Runner implements Filterable {
       } catch (IllegalArgumentException e) {
         throw new IllegalStateException("Method marked with annotation " + PluginClassLoadersAware.class.getName()
             + " should receive a parameter of type List<" + ArtifactClassLoader.class + ">");
+      } finally {
+        method.getMethod().setAccessible(false);
+      }
+    }
+  }
+
+  private static void injectContainerClassLoader(ArtifactClassLoaderHolder artifactClassLoaderHolder, Class<?> isolatedTestClass)
+      throws Throwable {
+    TestClass testClass = new TestClass(isolatedTestClass);
+    Class<? extends Annotation> containerClassLoaderAwareAnnotation = (Class<? extends Annotation>) artifactClassLoaderHolder
+        .loadClassWithApplicationClassLoader(ContainerClassLoaderAware.class.getName());
+    List<FrameworkMethod> contextAwareMethods = testClass.getAnnotatedMethods(containerClassLoaderAwareAnnotation);
+    if (contextAwareMethods.size() != 1) {
+      throw new IllegalStateException("Isolation tests need to have one method marked with annotation "
+          + ContainerClassLoaderAware.class.getName());
+    }
+    for (FrameworkMethod method : contextAwareMethods) {
+      if (!method.isStatic() || method.isPublic()) {
+        throw new IllegalStateException("Method marked with annotation " + ContainerClassLoaderAware.class.getName()
+            + " should be private static and it should receive a parameter of type "
+            + ArtifactClassLoader.class);
+      }
+      method.getMethod().setAccessible(true);
+      try {
+        final Object containerClassLoader = artifactClassLoaderHolder.getContainerClassLoader();
+        final Field artifactClassLoaderField =
+            containerClassLoader.getClass().getSuperclass().getDeclaredField("artifactClassLoader");
+        artifactClassLoaderField.setAccessible(true);
+        final Object unfilteredClassLoader = artifactClassLoaderField.get(containerClassLoader);
+        method.invokeExplosively(null, unfilteredClassLoader);
+      } catch (IllegalArgumentException e) {
+        throw new IllegalStateException("Method marked with annotation " + ContainerClassLoaderAware.class.getName()
+            + " should receive a parameter of type " + ArtifactClassLoader.class);
       } finally {
         method.getMethod().setAccessible(false);
       }

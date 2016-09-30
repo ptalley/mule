@@ -28,6 +28,11 @@ public class ClassPathRegistryBootstrapDiscoverer implements RegistryBootstrapDi
 
   public static final String BOOTSTRAP_PROPERTIES =
       "META-INF/services/org/mule/runtime/core/config/registry-bootstrap.properties";
+  private final ClassLoader classLoader;
+
+  public ClassPathRegistryBootstrapDiscoverer(ClassLoader classLoader) {
+    this.classLoader = classLoader;
+  }
 
   /**
    * {@inheritDoc}
@@ -35,7 +40,7 @@ public class ClassPathRegistryBootstrapDiscoverer implements RegistryBootstrapDi
   @Override
   public List<Properties> discover() throws BootstrapException {
     try {
-      return discoverProperties(BOOTSTRAP_PROPERTIES);
+      return discoverProperties(classLoader, BOOTSTRAP_PROPERTIES);
     } catch (IOException e) {
       throw new BootstrapException(createStaticMessage("Could not load properties file"), e);
     }

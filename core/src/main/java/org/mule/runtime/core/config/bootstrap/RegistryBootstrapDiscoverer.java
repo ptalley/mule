@@ -15,6 +15,7 @@ import java.util.Properties;
  */
 public interface RegistryBootstrapDiscoverer {
 
+  //TODO(pablo.kraan): bootsatrap - adda javadoc
   /**
    * Collects the Properties to be used in an ordered way.
    *
