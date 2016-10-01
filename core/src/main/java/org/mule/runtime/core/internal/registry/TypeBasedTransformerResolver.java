@@ -23,8 +23,8 @@ import org.mule.runtime.core.config.i18n.CoreMessages;
 import org.mule.runtime.core.transformer.TransformerChain;
 import org.mule.runtime.core.transformer.TransformerWeighting;
 import org.mule.runtime.core.transformer.graph.GraphTransformerResolver;
-import org.mule.runtime.core.transformer.simple.ObjectToByteArray;
-import org.mule.runtime.core.transformer.simple.ObjectToString;
+import org.mule.runtime.core.internal.transformer.simple.ObjectToByteArray;
+import org.mule.runtime.core.internal.transformer.simple.ObjectToString;
 
 import java.util.ArrayList;
 import java.util.Arrays;
