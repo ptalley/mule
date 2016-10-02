@@ -7,6 +7,7 @@
 
 package org.mule.functional.junit4;
 
+import static java.util.Collections.emptyList;
 import static org.mule.runtime.core.config.bootstrap.ClassPathRegistryBootstrapDiscoverer.BOOTSTRAP_PROPERTIES;
 import static org.mule.test.runner.utils.AnnotationUtils.getAnnotationAttributeFrom;
 import org.mule.runtime.core.api.MuleContext;
@@ -24,7 +25,10 @@ import org.mule.test.runner.PluginClassLoadersAware;
 import org.mule.test.runner.RunnerDelegateTo;
 import org.mule.test.runner.api.IsolatedClassLoaderExtensionsManagerConfigurationBuilder;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -120,17 +124,20 @@ public abstract class ArtifactFunctionalTestCase extends FunctionalTestCase {
 
     if (pluginClassLoaders != null && !pluginClassLoaders.isEmpty()) {
       builders.add(0, new IsolatedClassLoaderExtensionsManagerConfigurationBuilder(pluginClassLoaders));
-      builders.add(0, new BootstrapServiceContextBuilder(containerClassLoader, pluginClassLoaders));
+      builders.add(0, new BootstrapServiceContextBuilder(containerClassLoader, getExecutionClassLoader(), pluginClassLoaders));
     }
   }
 
   private static class BootstrapServiceContextBuilder extends AbstractConfigurationBuilder {
 
     private final ClassLoader containerClassLoader;
+    private final ClassLoader executionClassLoader;
     private final List<ArtifactClassLoader> pluginClassLoaders;
 
-    public BootstrapServiceContextBuilder(ClassLoader containerClassLoader, List<ArtifactClassLoader> pluginClassLoaders) {
+    public BootstrapServiceContextBuilder(ClassLoader containerClassLoader, ClassLoader executionClassLoader,
+                                          List<ArtifactClassLoader> pluginClassLoaders) {
       this.containerClassLoader = containerClassLoader;
+      this.executionClassLoader = executionClassLoader;
       this.pluginClassLoaders = pluginClassLoaders;
     }
 
@@ -141,21 +148,16 @@ public abstract class ArtifactFunctionalTestCase extends FunctionalTestCase {
 
       List<BootstrapService> bootstrapServices = new LinkedList<>();
       bootstrapServices.addAll(propertiesBootstrapServiceDiscoverer.discover());
+
       for (Object pluginClassLoader : pluginClassLoaders) {
 
-        ClassLoader classLoader =
-            (ClassLoader) pluginClassLoader.getClass().getMethod("getClassLoader").invoke(pluginClassLoader);
-        final URL localResource =
-            (URL) classLoader.getClass().getMethod("findResource", String.class).invoke(classLoader, BOOTSTRAP_PROPERTIES);
-
-        //final URL localResource = pluginClassLoader.findLocalResource(findLocalResource);
-
-        if (localResource != null) {
-          final Properties properties = PropertiesUtils.loadProperties(localResource);
-          final BootstrapService pluginBootstrapService =
-              new PropertiesBootstrapService(classLoader, properties);
-
+        BootstrapService pluginBootstrapService = getArtifactBootstrapService(pluginClassLoader);
+        if (pluginBootstrapService != null) {
           bootstrapServices.add(pluginBootstrapService);
+        }
+        BootstrapService appBootstrapService = getArtifactBootstrapService(executionClassLoader);
+        if (appBootstrapService != null) {
+          bootstrapServices.add(appBootstrapService);
         }
       }
 
@@ -168,6 +170,24 @@ public abstract class ArtifactFunctionalTestCase extends FunctionalTestCase {
       };
 
       muleContext.setBootstrapServiceDiscoverer(bootstrapServiceDiscoverer);
+    }
+
+    private BootstrapService getArtifactBootstrapService(Object pluginClassLoader)
+        throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException {
+      ClassLoader classLoader =
+          (ClassLoader) pluginClassLoader.getClass().getMethod("getClassLoader").invoke(pluginClassLoader);
+      final URL localResource =
+          (URL) classLoader.getClass().getMethod("findResource", String.class).invoke(classLoader, BOOTSTRAP_PROPERTIES);
+
+      //final URL localResource = pluginClassLoader.findLocalResource(findLocalResource);
+
+      BootstrapService pluginBootstrapService = null;
+      if (localResource != null) {
+        final Properties properties = PropertiesUtils.loadProperties(localResource);
+        pluginBootstrapService = new PropertiesBootstrapService(classLoader, properties);
+
+      }
+      return pluginBootstrapService;
     }
   }
 

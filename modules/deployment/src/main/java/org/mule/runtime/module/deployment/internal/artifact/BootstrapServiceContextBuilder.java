@@ -37,6 +37,7 @@ public class BootstrapServiceContextBuilder extends AbstractConfigurationBuilder
 
     List<BootstrapService> bootstrapServices = new LinkedList<>();
     bootstrapServices.addAll(propertiesBootstrapServiceDiscoverer.discover());
+    //TODO(pablo.kraan): bootstrap - is required to process app's bootstrap.properties?
     for (ArtifactPlugin artifactPlugin : artifactPlugins) {
       final URL localResource = artifactPlugin.getArtifactClassLoader().findLocalResource(BOOTSTRAP_PROPERTIES);
 
