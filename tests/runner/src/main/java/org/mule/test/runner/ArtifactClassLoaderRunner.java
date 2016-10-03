@@ -103,7 +103,7 @@ public class ArtifactClassLoaderRunner extends Runner implements Filterable {
   private static String userHome = System.getProperty(USER_HOME);
   private static ArtifactClassLoaderHolder artifactClassLoaderHolder;
   private static Exception errorCreatingClassLoaderTestRunner;
-  private static boolean pluginClassLoadersInjected = false;
+  private static boolean staticFieldsInjected = false;
 
   private final Runner delegate;
 
@@ -138,10 +138,10 @@ public class ArtifactClassLoaderRunner extends Runner implements Filterable {
         .buildRunner(AnnotationUtils.getAnnotationAttributeFrom(isolatedTestClass, runnerDelegateToClass, "value"),
                      isolatedTestClass);
 
-    if (!pluginClassLoadersInjected) {
+    if (!staticFieldsInjected) {
       injectPluginsClassLoaders(artifactClassLoaderHolder, isolatedTestClass);
       injectContainerClassLoader(artifactClassLoaderHolder, isolatedTestClass);
-      pluginClassLoadersInjected = true;
+      staticFieldsInjected = true;
     }
 
   }
