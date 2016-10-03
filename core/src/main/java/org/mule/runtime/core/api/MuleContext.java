@@ -410,7 +410,11 @@ public interface MuleContext extends Lifecycle {
    */
   ErrorTypeRepository getErrorTypeRepository();
 
-  //TODO(pablo.kraan): bootstrap - add javadoc
+  /**
+   * Sets application wide instance of {@link BootstrapServiceDiscoverer}
+   *
+   * @param bootstrapServiceDiscoverer bootstrap service discoverer instance. Non null.
+   */
   void setBootstrapServiceDiscoverer(BootstrapServiceDiscoverer bootstrapServiceDiscoverer);
 }
 
