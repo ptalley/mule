@@ -22,10 +22,10 @@ import static org.mule.runtime.module.extension.internal.xml.SchemaConstants.UNB
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.metadata.api.model.ObjectFieldType;
 import org.mule.metadata.api.model.ObjectType;
+import org.mule.runtime.extension.api.introspection.ElementDslModel;
 import org.mule.runtime.extension.api.introspection.declaration.type.annotation.FlattenedTypeAnnotation;
-import org.mule.runtime.extension.api.introspection.parameter.ImmutableParameterModel;
+import org.mule.runtime.extension.internal.introspection.parameter.ImmutableParameterModel;
 import org.mule.runtime.extension.xml.dsl.api.DslElementSyntax;
-import org.mule.runtime.extension.xml.dsl.api.property.XmlHintsModelProperty;
 import org.mule.runtime.module.extension.internal.capability.xml.schema.model.ComplexContent;
 import org.mule.runtime.module.extension.internal.capability.xml.schema.model.ComplexType;
 import org.mule.runtime.module.extension.internal.capability.xml.schema.model.ExplicitGroup;
@@ -66,29 +66,28 @@ final class ObjectTypeSchemaDelegate {
    * This method serves as a resolver for all that logic, creating the required element for the parameter with complex type.
    *
    * @param type the {@link ObjectType} of the parameter for which the element is being created
-   * @param paramDsl the {@link DslElementSyntax} of the parameter for which the element is being created
-   * @param paramXmlHints the {@link XmlHintsModelProperty} associated to the parameter, if any is present.
+   * @param paramSyntax the {@link DslElementSyntax} of the parameter for which the element is being created
+   * @param paramDsl the {@link ElementDslModel} associated to the parameter, if any is present.
    * @param description the documentation associated to the parameter
    * @param all the {@link ExplicitGroup group} the generated element should belong to
    */
-  void generatePojoElement(ObjectType type, DslElementSyntax paramDsl, Optional<XmlHintsModelProperty> paramXmlHints,
+  void generatePojoElement(ObjectType type, DslElementSyntax paramSyntax, ElementDslModel paramDsl,
                            String description, ExplicitGroup all) {
 
-    if (paramDsl.supportsChildDeclaration()) {
+    if (paramSyntax.supportsChildDeclaration()) {
       if (isImported(type)) {
-        addImportedTypeElement(paramDsl, description, type, all);
+        addImportedTypeElement(paramSyntax, description, type, all);
       } else {
-        if (paramDsl.isWrapped()) {
-          declareRefToType(type, paramDsl, description, all);
+        if (paramSyntax.isWrapped()) {
+          declareRefToType(type, paramSyntax, description, all);
         } else {
-          declareTypeInline(type, paramDsl, description, all);
+          declareTypeInline(type, paramSyntax, description, all);
         }
       }
     }
 
     Optional<DslElementSyntax> typeDsl = builder.getDslResolver().resolve(type);
-    boolean allowsRef = paramXmlHints.map(XmlHintsModelProperty::allowsReferences).orElse(true);
-    if (allowsRef && typeDsl.isPresent() && typeDsl.get().supportsTopLevelDeclaration() && !isImported(type)) {
+    if (paramDsl.allowsReferences() && typeDsl.isPresent() && typeDsl.get().supportsTopLevelDeclaration() && !isImported(type)) {
       // We need to register the type, just in case people want to use it as global elements
       registerPojoType(type, description);
     }

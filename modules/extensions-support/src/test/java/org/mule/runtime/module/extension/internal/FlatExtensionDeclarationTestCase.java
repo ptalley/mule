@@ -86,7 +86,7 @@ import org.mule.runtime.extension.api.introspection.declaration.DescribingContex
 import org.mule.runtime.extension.api.introspection.declaration.fluent.ExtensionDeclarer;
 import org.mule.runtime.extension.api.introspection.declaration.spi.ModelEnricher;
 import org.mule.runtime.extension.api.introspection.operation.OperationModel;
-import org.mule.runtime.extension.api.introspection.operation.RuntimeOperationModel;
+import org.mule.runtime.extension.internal.introspection.operation.RuntimeOperationModel;
 import org.mule.runtime.extension.api.introspection.parameter.ParameterModel;
 import org.mule.runtime.extension.api.introspection.source.RuntimeSourceModel;
 import org.mule.runtime.extension.tck.introspection.TestWebServiceConsumerDeclarer;

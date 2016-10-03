@@ -37,7 +37,7 @@ import org.mule.runtime.extension.api.introspection.RuntimeExtensionModel;
 import org.mule.runtime.extension.api.introspection.config.RuntimeConfigurationModel;
 import org.mule.runtime.extension.api.introspection.exception.ExceptionEnricher;
 import org.mule.runtime.extension.api.introspection.exception.ExceptionEnricherFactory;
-import org.mule.runtime.extension.api.introspection.operation.RuntimeOperationModel;
+import org.mule.runtime.extension.internal.introspection.operation.RuntimeOperationModel;
 import org.mule.runtime.extension.api.runtime.ConfigurationInstance;
 import org.mule.runtime.extension.api.runtime.RetryRequest;
 import org.mule.runtime.extension.api.runtime.operation.Interceptor;

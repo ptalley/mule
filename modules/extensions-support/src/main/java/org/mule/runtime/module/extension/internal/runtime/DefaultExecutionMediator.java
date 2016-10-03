@@ -22,7 +22,7 @@ import org.mule.runtime.core.work.SerialWorkManager;
 import org.mule.runtime.extension.api.introspection.Interceptable;
 import org.mule.runtime.extension.api.introspection.RuntimeExtensionModel;
 import org.mule.runtime.extension.api.introspection.declaration.fluent.ConfigurationDeclaration;
-import org.mule.runtime.extension.api.introspection.operation.RuntimeOperationModel;
+import org.mule.runtime.extension.internal.introspection.operation.RuntimeOperationModel;
 import org.mule.runtime.extension.api.runtime.ConfigurationInstance;
 import org.mule.runtime.extension.api.runtime.ConfigurationStats;
 import org.mule.runtime.extension.api.runtime.RetryRequest;

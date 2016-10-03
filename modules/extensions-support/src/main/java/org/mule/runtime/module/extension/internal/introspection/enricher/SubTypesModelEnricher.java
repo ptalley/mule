@@ -22,7 +22,7 @@ import org.mule.runtime.extension.api.introspection.declaration.fluent.Extension
 import org.mule.runtime.extension.api.introspection.declaration.fluent.ExtensionDeclarer;
 import org.mule.runtime.extension.api.introspection.declaration.type.ExtensionsTypeLoaderFactory;
 import org.mule.runtime.extension.api.introspection.property.ImportedTypesModelProperty;
-import org.mule.runtime.extension.api.introspection.property.SubTypesModelProperty;
+import org.mule.runtime.extension.api.introspection.SubTypesModel;
 
 import java.util.List;
 import java.util.Map;
@@ -52,7 +52,7 @@ public final class SubTypesModelEnricher extends AbstractAnnotatedModelEnricher 
 
   }
 
-  private SubTypesModelProperty declareSubTypesMapping(List<SubTypeMapping> typeMappings, String name) {
+  private SubTypesModel declareSubTypesMapping(List<SubTypeMapping> typeMappings, String name) {
     if (typeMappings.stream().map(SubTypeMapping::baseType).distinct().collect(toList()).size() != typeMappings.size()) {
       throw new IllegalModelDefinitionException(String
           .format("There should be only one SubtypeMapping for any given base type in extension [%s]."
@@ -65,7 +65,7 @@ public final class SubTypesModelEnricher extends AbstractAnnotatedModelEnricher 
                                                  .map(subType -> getMetadataType(subType, typeLoader))
                                                  .collect(new ImmutableListCollector<>())));
 
-    return new SubTypesModelProperty(subTypesMap);
+    return new SubTypesModel(subTypesMap);
   }
 
 }

@@ -23,7 +23,7 @@ import org.mule.runtime.api.metadata.resolving.MetadataOutputResolver;
 import org.mule.runtime.api.metadata.resolving.MetadataResult;
 import org.mule.runtime.api.metadata.resolving.QueryEntityResolver;
 import org.mule.runtime.extension.api.introspection.metadata.MetadataResolverFactory;
-import org.mule.runtime.extension.api.introspection.operation.RuntimeOperationModel;
+import org.mule.runtime.extension.internal.introspection.operation.RuntimeOperationModel;
 
 import java.util.Set;
 

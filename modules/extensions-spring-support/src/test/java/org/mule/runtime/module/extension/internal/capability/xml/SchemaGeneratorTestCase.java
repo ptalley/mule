@@ -19,9 +19,9 @@ import org.mule.runtime.core.util.IOUtils;
 import org.mule.runtime.extension.api.introspection.ExtensionFactory;
 import org.mule.runtime.extension.api.introspection.ExtensionModel;
 import org.mule.runtime.extension.api.introspection.RuntimeExtensionModel;
+import org.mule.runtime.extension.api.introspection.XmlDslModel;
 import org.mule.runtime.extension.api.introspection.declaration.fluent.ExtensionDeclarer;
 import org.mule.runtime.extension.api.introspection.declaration.spi.ModelEnricher;
-import org.mule.runtime.extension.xml.dsl.api.property.XmlModelProperty;
 import org.mule.runtime.extension.xml.dsl.api.resolver.DslResolvingContext;
 import org.mule.runtime.module.extension.internal.DefaultDescribingContext;
 import org.mule.runtime.module.extension.internal.capability.xml.schema.SchemaGenerator;
@@ -123,9 +123,9 @@ public class SchemaGeneratorTestCase extends AbstractMuleTestCase {
 
   @Test
   public void generate() throws Exception {
-    XmlModelProperty capability = extensionUnderTest.getModelProperty(XmlModelProperty.class).get();
+    XmlDslModel languageModel = extensionUnderTest.getXmlLanguageModel();
 
-    String schema = generator.generate(extensionUnderTest, capability, new SchemaTestDslContext());
+    String schema = generator.generate(extensionUnderTest, languageModel, new SchemaTestDslContext());
     compareXML(expectedSchema, schema);
   }
 

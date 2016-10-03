@@ -29,7 +29,7 @@ import org.mule.runtime.core.util.ClassUtils;
 import org.mule.runtime.extension.api.ExtensionManager;
 import org.mule.runtime.extension.api.introspection.RuntimeExtensionModel;
 import org.mule.runtime.extension.api.introspection.config.RuntimeConfigurationModel;
-import org.mule.runtime.extension.api.introspection.operation.RuntimeOperationModel;
+import org.mule.runtime.extension.internal.introspection.operation.RuntimeOperationModel;
 import org.mule.runtime.extension.api.runtime.ConfigurationInstance;
 import org.mule.runtime.extension.api.runtime.operation.OperationResult;
 import org.mule.runtime.module.extension.internal.model.property.ParameterGroupModelProperty;

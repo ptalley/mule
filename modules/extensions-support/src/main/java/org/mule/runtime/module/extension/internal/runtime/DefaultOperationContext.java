@@ -18,7 +18,7 @@ import org.mule.runtime.core.api.transaction.TransactionConfig;
 import org.mule.runtime.core.transaction.MuleTransactionConfig;
 import org.mule.runtime.extension.api.connectivity.OperationTransactionalAction;
 import org.mule.runtime.extension.api.introspection.ExtensionModel;
-import org.mule.runtime.extension.api.introspection.operation.RuntimeOperationModel;
+import org.mule.runtime.extension.internal.introspection.operation.RuntimeOperationModel;
 import org.mule.runtime.extension.api.runtime.ConfigurationInstance;
 import org.mule.runtime.module.extension.internal.runtime.resolver.ResolverSetResult;
 import org.mule.runtime.module.extension.internal.runtime.transaction.ExtensionTransactionFactory;

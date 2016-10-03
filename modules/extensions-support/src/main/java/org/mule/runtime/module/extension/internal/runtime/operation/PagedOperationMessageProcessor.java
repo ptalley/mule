@@ -14,7 +14,7 @@ import org.mule.runtime.core.streaming.ConsumerIterator;
 import org.mule.runtime.core.streaming.ListConsumer;
 import org.mule.runtime.core.streaming.Producer;
 import org.mule.runtime.extension.api.introspection.RuntimeExtensionModel;
-import org.mule.runtime.extension.api.introspection.operation.RuntimeOperationModel;
+import org.mule.runtime.extension.internal.introspection.operation.RuntimeOperationModel;
 import org.mule.runtime.extension.api.introspection.streaming.PagingProvider;
 import org.mule.runtime.module.extension.internal.manager.ExtensionManagerAdapter;
 import org.mule.runtime.module.extension.internal.runtime.OperationContextAdapter;

@@ -58,7 +58,7 @@ import org.mule.runtime.extension.api.introspection.RuntimeExtensionModel;
 import org.mule.runtime.extension.api.introspection.config.RuntimeConfigurationModel;
 import org.mule.runtime.extension.api.introspection.exception.ExceptionEnricher;
 import org.mule.runtime.extension.api.introspection.exception.ExceptionEnricherFactory;
-import org.mule.runtime.extension.api.introspection.property.SubTypesModelProperty;
+import org.mule.runtime.extension.api.introspection.SubTypesModel;
 import org.mule.runtime.extension.api.introspection.source.RuntimeSourceModel;
 import org.mule.runtime.extension.api.runtime.ConfigurationInstance;
 import org.mule.runtime.extension.api.runtime.ConfigurationProvider;
@@ -147,7 +147,7 @@ public class ExtensionMessageSourceTestCase extends AbstractMuleContextTestCase 
 
     when(flowConstruct.getMuleContext()).thenReturn(muleContext);
 
-    when(extensionModel.getModelProperty(SubTypesModelProperty.class)).thenReturn(Optional.empty());
+    when(extensionModel.getModelProperty(SubTypesModel.class)).thenReturn(Optional.empty());
     when(configurationModel.getSourceModel(SOURCE_NAME)).thenReturn(Optional.of(sourceModel));
     when(extensionManager.getConfigurationProvider(CONFIG_NAME)).thenReturn(Optional.of(configurationProvider));
     when(configurationProvider.get(any())).thenReturn(configurationInstance);

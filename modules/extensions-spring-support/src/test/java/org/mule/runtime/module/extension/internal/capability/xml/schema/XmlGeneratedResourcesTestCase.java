@@ -17,21 +17,23 @@ import static org.mockito.Mockito.when;
 import static org.mule.runtime.module.extension.internal.capability.xml.schema.SpringSchemaBundleResourceFactory.BUNDLE_MASK;
 import static org.mule.runtime.module.extension.internal.capability.xml.schema.SpringSchemaBundleResourceFactory.GENERATED_FILE_NAME;
 import static org.mule.runtime.module.extension.internal.xml.SchemaConstants.CURRENT_VERSION;
+import static org.mule.test.module.extension.internal.util.ExtensionsTestUtils.mockSubTypes;
 import org.mule.runtime.core.api.registry.ServiceRegistry;
 import org.mule.runtime.extension.api.introspection.ExtensionModel;
+import org.mule.runtime.extension.api.introspection.XmlDslModel;
 import org.mule.runtime.extension.api.introspection.property.ExportModelProperty;
 import org.mule.runtime.extension.api.introspection.property.ImportedTypesModelProperty;
-import org.mule.runtime.extension.api.introspection.property.SubTypesModelProperty;
 import org.mule.runtime.extension.api.resources.GeneratedResource;
 import org.mule.runtime.extension.api.resources.ResourcesGenerator;
 import org.mule.runtime.extension.api.resources.spi.GeneratedResourceFactory;
-import org.mule.runtime.extension.xml.dsl.api.property.XmlModelProperty;
+import org.mule.runtime.extension.internal.introspection.ImmutableXmlDslModel;
 import org.mule.runtime.extension.xml.dsl.api.resources.spi.DslResourceFactory;
 import org.mule.runtime.module.extension.internal.config.ExtensionNamespaceHandler;
 import org.mule.runtime.module.extension.internal.resources.AbstractGeneratedResourceFactoryTestCase;
 import org.mule.runtime.module.extension.internal.resources.AnnotationProcessorResourceGenerator;
 import org.mule.tck.size.SmallTest;
 
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.ServiceLoader;
 
@@ -65,7 +67,7 @@ public class XmlGeneratedResourcesTestCase extends AbstractGeneratedResourceFact
 
   private ResourcesGenerator generator;
 
-  private XmlModelProperty xmlModelProperty;
+  private XmlDslModel xmlDslModel;
 
   private SpringHandlerBundleResourceFactory springHandlerFactory = new SpringHandlerBundleResourceFactory();
   private SpringSchemaBundleResourceFactory springSchemaBundleResourceFactory = new SpringSchemaBundleResourceFactory();
@@ -73,12 +75,12 @@ public class XmlGeneratedResourcesTestCase extends AbstractGeneratedResourceFact
 
   @Before
   public void before() {
-    xmlModelProperty =
-        new XmlModelProperty(EXTENSION_VERSION, EXTENSION_NAME, UNESCAPED_LOCATION_PREFIX + SCHEMA_LOCATION, SCHEMA_NAME, String
+    xmlDslModel =
+        new ImmutableXmlDslModel(EXTENSION_VERSION, EXTENSION_NAME, UNESCAPED_LOCATION_PREFIX + SCHEMA_LOCATION, SCHEMA_NAME, String
             .format("%s/%s/%s", UNESCAPED_LOCATION_PREFIX + SCHEMA_LOCATION, CURRENT_VERSION, SCHEMA_NAME));
 
-    when(extensionModel.getModelProperty(XmlModelProperty.class)).thenReturn(Optional.of(xmlModelProperty));
-    when(extensionModel.getModelProperty(SubTypesModelProperty.class)).thenReturn(Optional.empty());
+    when(extensionModel.getXmlLanguageModel()).thenReturn(xmlDslModel);
+    mockSubTypes(extensionModel, new HashMap<>());
     when(extensionModel.getModelProperty(ImportedTypesModelProperty.class)).thenReturn(Optional.empty());
     when(extensionModel.getModelProperty(ExportModelProperty.class)).thenReturn(Optional.empty());
 

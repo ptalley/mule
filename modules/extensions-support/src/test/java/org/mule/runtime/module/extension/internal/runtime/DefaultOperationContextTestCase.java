@@ -19,7 +19,7 @@ import org.mule.runtime.core.api.Event;
 import org.mule.runtime.extension.api.ExtensionManager;
 import org.mule.runtime.extension.api.introspection.ExtensionModel;
 import org.mule.runtime.extension.api.introspection.config.RuntimeConfigurationModel;
-import org.mule.runtime.extension.api.introspection.operation.RuntimeOperationModel;
+import org.mule.runtime.extension.internal.introspection.operation.RuntimeOperationModel;
 import org.mule.runtime.extension.api.runtime.ConfigurationInstance;
 import org.mule.runtime.module.extension.internal.runtime.config.LifecycleAwareConfigurationInstance;
 import org.mule.runtime.module.extension.internal.runtime.resolver.ResolverSetResult;

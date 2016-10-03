@@ -44,7 +44,9 @@ import org.mule.runtime.api.tls.TlsContextFactory;
 import org.mule.runtime.core.api.config.ThreadingProfile;
 import org.mule.runtime.core.util.StringUtils;
 import org.mule.runtime.extension.api.connectivity.OperationTransactionalAction;
+import org.mule.runtime.extension.api.introspection.ElementDslModel;
 import org.mule.runtime.extension.api.introspection.ExtensionModel;
+import org.mule.runtime.extension.api.introspection.XmlDslModel;
 import org.mule.runtime.extension.api.introspection.config.RuntimeConfigurationModel;
 import org.mule.runtime.extension.api.introspection.connection.ConnectionProviderModel;
 import org.mule.runtime.extension.api.introspection.declaration.type.ExtensionsTypeLoaderFactory;
@@ -52,12 +54,9 @@ import org.mule.runtime.extension.api.introspection.operation.OperationModel;
 import org.mule.runtime.extension.api.introspection.parameter.ExpressionSupport;
 import org.mule.runtime.extension.api.introspection.parameter.ParameterModel;
 import org.mule.runtime.extension.api.introspection.property.ImportedTypesModelProperty;
-import org.mule.runtime.extension.api.introspection.property.SubTypesModelProperty;
 import org.mule.runtime.extension.api.introspection.source.SourceModel;
 import org.mule.runtime.extension.api.util.SubTypesMappingContainer;
 import org.mule.runtime.extension.xml.dsl.api.DslElementSyntax;
-import org.mule.runtime.extension.xml.dsl.api.property.XmlHintsModelProperty;
-import org.mule.runtime.extension.xml.dsl.api.property.XmlModelProperty;
 import org.mule.runtime.extension.xml.dsl.api.resolver.DslResolvingContext;
 import org.mule.runtime.extension.xml.dsl.api.resolver.DslSyntaxResolver;
 import org.mule.runtime.module.extension.internal.capability.xml.schema.model.Annotation;
@@ -124,12 +123,12 @@ public final class SchemaBuilder {
   private Map<MetadataType, String> importedTypes;
   private DslResolvingContext dslExtensionContext;
 
-  public static SchemaBuilder newSchema(ExtensionModel extensionModel, XmlModelProperty xmlModelProperty,
+  public static SchemaBuilder newSchema(ExtensionModel extensionModel, XmlDslModel xmlDslModel,
                                         DslResolvingContext dslContext) {
 
     SchemaBuilder builder = new SchemaBuilder();
     builder.schema = new Schema();
-    builder.schema.setTargetNamespace(xmlModelProperty.getNamespaceUri());
+    builder.schema.setTargetNamespace(xmlDslModel.getNamespaceUri());
     builder.schema.setElementFormDefault(FormChoice.QUALIFIED);
     builder.schema.setAttributeFormDefault(FormChoice.UNQUALIFIED);
     builder.withDslSyntaxResolver(extensionModel, dslContext)
@@ -142,9 +141,7 @@ public final class SchemaBuilder {
         extensionModel.getModelProperty(ImportedTypesModelProperty.class).map(ImportedTypesModelProperty::getImportedTypes);
     builder.withImportedTypes(importedTypes.orElse(ImmutableMap.of()));
 
-    Optional<SubTypesModelProperty> subTypesProperty = extensionModel.getModelProperty(SubTypesModelProperty.class);
-    builder.withTypeMapping(subTypesProperty.isPresent() ? subTypesProperty.get().getSubTypesMapping() : ImmutableMap.of());
-
+    builder.withTypeMapping(extensionModel.getSubTypesModel().getSubTypesMapping());
     builder.withTypes(extensionModel.getTypes());
 
     return builder;
@@ -497,14 +494,14 @@ public final class SchemaBuilder {
     return getParameterDeclarationVisitor(extensionType, all, parameterModel.getName(), parameterModel.getDescription(),
                                           parameterModel.getExpressionSupport(), parameterModel.isRequired(),
                                           parameterModel.getDefaultValue(), paramDsl,
-                                          parameterModel.getModelProperty(XmlHintsModelProperty.class));
+                                          parameterModel.getDslModel());
   }
 
   private MetadataTypeVisitor getParameterDeclarationVisitor(final ExtensionType extensionType, final ExplicitGroup all,
                                                              final String name, final String description,
                                                              ExpressionSupport expressionSupport, boolean required,
                                                              Object defaultValue, DslElementSyntax paramDsl,
-                                                             Optional<XmlHintsModelProperty> paramXmlHints) {
+                                                             ElementDslModel dslModel) {
     return new MetadataTypeVisitor() {
 
       private boolean forceOptional = paramDsl.supportsChildDeclaration() || !required;
@@ -540,7 +537,7 @@ public final class SchemaBuilder {
         }
 
         defaultVisit(objectType);
-        objectTypeDelegate.generatePojoElement(objectType, paramDsl, paramXmlHints, description, all);
+        objectTypeDelegate.generatePojoElement(objectType, paramDsl, dslModel, description, all);
       }
 
       @Override
@@ -564,18 +561,16 @@ public final class SchemaBuilder {
     };
   }
 
-  private XmlModelProperty registerExtensionImport(ExtensionModel extension) {
-    XmlModelProperty importXml = extension.getModelProperty(XmlModelProperty.class)
-        .orElseThrow(() -> new IllegalArgumentException(format("The Extension [%s] doesn't have the required model property [%s]",
-                                                               extension, XmlModelProperty.NAME)));
+  private XmlDslModel registerExtensionImport(ExtensionModel extension) {
+    XmlDslModel languageModel = extension.getXmlLanguageModel();
     Import schemaImport = new Import();
-    schemaImport.setNamespace(importXml.getNamespaceUri());
-    schemaImport.setSchemaLocation(importXml.getSchemaLocation());
+    schemaImport.setNamespace(languageModel.getNamespaceUri());
+    schemaImport.setSchemaLocation(languageModel.getSchemaLocation());
     if (!schema.getIncludeOrImportOrRedefine().contains(schemaImport)) {
       schema.getIncludeOrImportOrRedefine().add(schemaImport);
     }
 
-    return importXml;
+    return languageModel;
   }
 
   private void addTlsSupport(ExtensionType extensionType, ExplicitGroup all) {

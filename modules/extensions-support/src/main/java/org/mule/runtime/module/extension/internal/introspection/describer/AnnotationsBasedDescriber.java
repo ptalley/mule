@@ -39,7 +39,6 @@ import org.mule.runtime.extension.api.introspection.declaration.fluent.Extension
 import org.mule.runtime.extension.api.introspection.declaration.fluent.HasConnectionProviderDeclarer;
 import org.mule.runtime.extension.api.introspection.declaration.fluent.HasOperationDeclarer;
 import org.mule.runtime.extension.api.introspection.declaration.fluent.HasSourceDeclarer;
-import org.mule.runtime.extension.api.introspection.declaration.fluent.NamedDeclaration;
 import org.mule.runtime.extension.api.introspection.declaration.fluent.OperationDeclarer;
 import org.mule.runtime.extension.api.introspection.declaration.fluent.ParameterDeclarer;
 import org.mule.runtime.extension.api.introspection.declaration.fluent.ParameterizedDeclarer;
@@ -52,7 +51,7 @@ import org.mule.runtime.extension.api.introspection.streaming.PagingProvider;
 import org.mule.runtime.extension.api.manifest.DescriberManifest;
 import org.mule.runtime.extension.api.runtime.operation.ParameterResolver;
 import org.mule.runtime.extension.api.runtime.operation.InterceptingCallback;
-import org.mule.runtime.extension.xml.dsl.api.property.XmlHintsModelProperty;
+import org.mule.runtime.extension.internal.introspection.ImmutableElementDslModel;
 import org.mule.runtime.module.extension.internal.exception.IllegalConfigurationModelDefinitionException;
 import org.mule.runtime.module.extension.internal.exception.IllegalConnectionProviderModelDefinitionException;
 import org.mule.runtime.module.extension.internal.exception.IllegalOperationModelDefinitionException;
@@ -547,7 +546,7 @@ public final class AnnotationsBasedDescriber implements Describer {
   private void addXmlHintsModelProperty(ExtensionParameter extensionParameter, ParameterDeclarer parameter) {
     Optional<XmlHints> elementStyle = extensionParameter.getAnnotation(XmlHints.class);
     if (elementStyle.isPresent()) {
-      parameter.withModelProperty(new XmlHintsModelProperty(elementStyle.get()));
+      parameter.withModelProperty(new ImmutableElementDslModel(elementStyle.get()));
     }
   }
 

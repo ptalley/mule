@@ -59,10 +59,8 @@ import org.mule.runtime.extension.api.introspection.metadata.NullMetadataKey;
 import org.mule.runtime.extension.api.introspection.parameter.ParameterModel;
 import org.mule.runtime.extension.api.introspection.property.MetadataContentModelProperty;
 import org.mule.runtime.extension.api.introspection.property.MetadataKeyPartModelProperty;
-import org.mule.runtime.extension.api.introspection.property.SubTypesModelProperty;
 import org.mule.runtime.extension.api.util.SubTypesMappingContainer;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.List;
@@ -420,8 +418,7 @@ public class MetadataMediator {
    * @return the {@link SubTypesMappingContainer} associated to the extensionModel.
    */
   private SubTypesMappingContainer getSubTypesMappingContainer(ExtensionModel extensionModel) {
-    return new SubTypesMappingContainer(extensionModel.getModelProperty(SubTypesModelProperty.class)
-        .map(SubTypesModelProperty::getSubTypesMapping).orElse(ImmutableMap.of()));
+    return new SubTypesMappingContainer(extensionModel.getSubTypesModel().getSubTypesMapping());
   }
 
   /**

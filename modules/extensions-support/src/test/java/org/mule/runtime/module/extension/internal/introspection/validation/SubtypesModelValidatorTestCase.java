@@ -9,12 +9,13 @@ package org.mule.runtime.module.extension.internal.introspection.validation;
 import static java.util.Arrays.asList;
 import static org.mockito.Answers.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.when;
+import static org.mule.test.module.extension.internal.util.ExtensionsTestUtils.mockSubTypes;
 import static org.mule.test.module.extension.internal.util.ExtensionsTestUtils.toMetadataType;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.runtime.extension.api.exception.IllegalModelDefinitionException;
 import org.mule.runtime.extension.api.introspection.ExtensionModel;
 import org.mule.runtime.extension.api.introspection.property.ImportedTypesModelProperty;
-import org.mule.runtime.extension.api.introspection.property.SubTypesModelProperty;
+import org.mule.runtime.extension.internal.introspection.ImmutableSubTypesModel;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
@@ -44,8 +45,7 @@ public class SubtypesModelValidatorTestCase extends AbstractMuleTestCase {
     subtypes.put(toMetadataType(BaseAbstractPojo.class), asList(toMetadataType(Pojo.class)));
     subtypes.put(toMetadataType(BaseCustomInterface.class), asList(toMetadataType(Pojo.class)));
 
-    when(extensionModel.getModelProperty(SubTypesModelProperty.class))
-        .thenReturn(Optional.of(new SubTypesModelProperty(subtypes)));
+    mockSubTypes(extensionModel, subtypes);
     when(extensionModel.getModelProperty(ImportedTypesModelProperty.class)).thenReturn(Optional.empty());
 
     validator.validate(extensionModel);
@@ -57,8 +57,7 @@ public class SubtypesModelValidatorTestCase extends AbstractMuleTestCase {
     subtypes.put(toMetadataType(BaseAbstractPojo.class), asList(toMetadataType(AbstractPojo.class)));
     subtypes.put(toMetadataType(BaseCustomInterface.class), asList(toMetadataType(CustomInterface.class)));
 
-    when(extensionModel.getModelProperty(SubTypesModelProperty.class))
-        .thenReturn(Optional.of(new SubTypesModelProperty(subtypes)));
+    when(extensionModel.getSubTypesModel()).thenReturn(new ImmutableSubTypesModel(subtypes));
     when(extensionModel.getModelProperty(ImportedTypesModelProperty.class)).thenReturn(Optional.empty());
 
     validator.validate(extensionModel);
@@ -70,8 +69,7 @@ public class SubtypesModelValidatorTestCase extends AbstractMuleTestCase {
     subtypes.put(toMetadataType(BaseCustomInterface.class),
                  asList(toMetadataType(AbstractPojo.class), toMetadataType(CustomInterface.class)));
 
-    when(extensionModel.getModelProperty(SubTypesModelProperty.class))
-        .thenReturn(Optional.of(new SubTypesModelProperty(subtypes)));
+    mockSubTypes(extensionModel, subtypes);
     when(extensionModel.getModelProperty(ImportedTypesModelProperty.class)).thenReturn(Optional.empty());
 
     validator.validate(extensionModel);

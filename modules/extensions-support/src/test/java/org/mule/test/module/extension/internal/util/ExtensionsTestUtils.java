@@ -15,7 +15,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 import static org.mule.metadata.api.model.MetadataFormat.JAVA;
-
 import org.mule.metadata.api.ClassTypeLoader;
 import org.mule.metadata.api.builder.ArrayTypeBuilder;
 import org.mule.metadata.api.builder.BaseTypeBuilder;
@@ -25,8 +24,8 @@ import org.mule.metadata.api.model.DictionaryType;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.metadata.java.api.handler.TypeHandlerManager;
 import org.mule.metadata.java.api.utils.ParsingContext;
-import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.Event;
+import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.extension.api.ExtensionManager;
 import org.mule.runtime.extension.api.introspection.EnrichableModel;
 import org.mule.runtime.extension.api.introspection.ExtensionModel;
@@ -37,6 +36,7 @@ import org.mule.runtime.extension.api.introspection.property.ClassLoaderModelPro
 import org.mule.runtime.extension.api.introspection.property.ConfigTypeModelProperty;
 import org.mule.runtime.extension.api.introspection.property.ConnectivityModelProperty;
 import org.mule.runtime.extension.api.runtime.ConfigurationInstance;
+import org.mule.runtime.extension.internal.introspection.ImmutableSubTypesModel;
 import org.mule.runtime.module.extension.internal.runtime.resolver.ValueResolver;
 
 import java.util.Collection;
@@ -178,5 +178,9 @@ public abstract class ExtensionsTestUtils {
     if (requiresConnection) {
       when(model.getModelProperty(ConnectivityModelProperty.class)).thenReturn(of(mock(ConnectivityModelProperty.class)));
     }
+  }
+
+  public static void mockSubTypes(ExtensionModel mockModel, Map<MetadataType, List<MetadataType>> subtypes) {
+    when(mockModel.getSubTypesModel()).thenReturn(new ImmutableSubTypesModel(subtypes));
   }
 }

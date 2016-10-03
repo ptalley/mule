@@ -9,14 +9,16 @@ package org.mule.runtime.module.extension.internal.introspection.enricher;
 
 import static org.mule.runtime.extension.xml.dsl.api.XmlModelUtils.createXmlModelProperty;
 import org.mule.runtime.extension.api.annotation.dsl.xml.Xml;
+import org.mule.runtime.extension.api.introspection.XmlDslModel;
+import org.mule.runtime.extension.internal.introspection.ImmutableXmlDslModel;
 import org.mule.runtime.extension.api.introspection.declaration.DescribingContext;
 import org.mule.runtime.extension.api.introspection.declaration.fluent.ExtensionDeclaration;
 import org.mule.runtime.extension.api.introspection.declaration.fluent.ExtensionDeclarer;
-import org.mule.runtime.extension.xml.dsl.api.property.XmlModelProperty;
+import org.mule.runtime.extension.xml.dsl.api.XmlModelUtils;
 
 /**
  * Verifies if the extension is annotated with {@link Xml} and if so, enriches the {@link ExtensionDeclarer} with a
- * {@link XmlModelProperty}.
+ * {@link XmlDslModel}.
  * <p>
  * To get a hold of the {@link Class} on which the {@link Xml} annotation is expected to be, the {@link DescribingContext} will be
  * queried for such a model property. If such property is not present, then this enricher will return without any side effects
@@ -30,7 +32,7 @@ public final class XmlModelEnricher extends AbstractAnnotatedModelEnricher {
     Xml xml = extractAnnotation(describingContext.getExtensionDeclarer().getDeclaration(), Xml.class);
     ExtensionDeclarer descriptor = describingContext.getExtensionDeclarer();
     ExtensionDeclaration extensionDeclaration = descriptor.getDeclaration();
-    descriptor.withModelProperty(createXmlModelProperty(xml, extensionDeclaration.getName(), extensionDeclaration.getVersion()));
+    descriptor.withModelProperty(XmlModelUtils.createXmlLanguageModel(xml, extensionDeclaration.getName(), extensionDeclaration.getVersion()));
   }
 
 }

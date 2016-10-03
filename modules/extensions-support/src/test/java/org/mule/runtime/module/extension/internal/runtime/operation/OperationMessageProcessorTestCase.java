@@ -31,7 +31,7 @@ import org.mule.runtime.core.api.Event;
 import org.mule.runtime.core.api.message.InternalMessage;
 import org.mule.runtime.core.api.construct.FlowConstruct;
 import org.mule.runtime.core.el.mvel.MVELExpressionLanguage;
-import org.mule.runtime.extension.api.introspection.ImmutableOutputModel;
+import org.mule.runtime.extension.internal.introspection.ImmutableOutputModel;
 import org.mule.runtime.extension.api.runtime.operation.OperationContext;
 import org.mule.runtime.extension.api.runtime.operation.OperationResult;
 import org.mule.runtime.module.extension.internal.runtime.OperationContextAdapter;
