@@ -49,9 +49,8 @@ import org.mule.runtime.extension.api.annotation.dsl.xml.Xml;
 @Import(type = TcpClientSocketProperties.class, from = "Sockets")
 @Import(type = TcpServerSocketProperties.class, from = "Sockets")
 @Xml(namespaceLocation = "http://www.mulesoft.org/schema/mule/httpn", namespace = "httpn")
-@Export(resources = {"/META-INF/services/org/mule/runtime/core/config/registry-bootstrap.properties"},
-    classes = {HttpBasicAuthenticationFilter.class, HttpClient.class})
-@Export(resources = {"/META-INF/services/org/mule/runtime/core/config/registry-bootstrap.properties"})
+@Export(classes = {HttpBasicAuthenticationFilter.class, HttpClient.class})
+
 public class HttpConnector {
 
   public static final String URL_CONFIGURATION = "URL Configuration";

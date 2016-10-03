@@ -1454,10 +1454,10 @@ public class DeploymentServiceTestCase extends AbstractMuleTestCase {
   @Test
   public void deploysAppWithPluginBootstrapProperty() throws Exception {
     final ArtifactPluginFileBuilder pluginFileBuilder = new ArtifactPluginFileBuilder("bootstrapPlugin")
-      .containingResource("plugin-bootstrap.properties", BOOTSTRAP_PROPERTIES).containingClass("org/foo/EchoTest.clazz");
+        .containingResource("plugin-bootstrap.properties", BOOTSTRAP_PROPERTIES).containingClass("org/foo/EchoTest.clazz");
 
     ApplicationFileBuilder applicationFileBuilder = new ApplicationFileBuilder("app-with-plugin-bootstrap")
-      .definedBy("app-with-plugin-bootstrap.xml").containingPlugin(pluginFileBuilder);
+        .definedBy("app-with-plugin-bootstrap.xml").containingPlugin(pluginFileBuilder);
     addPackedAppFromBuilder(applicationFileBuilder);
 
     startDeployment();
