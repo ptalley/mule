@@ -96,8 +96,8 @@ public class MessageEnricher extends AbstractMessageProcessorOwner implements No
   }
 
   public void setEnrichmentMessageProcessor(Processor enrichmentProcessor) {
-      this.enrichmentProcessor = newChain(enrichmentProcessor);
-      ((MuleContextAware) this.enrichmentProcessor).setMuleContext(muleContext);
+    this.enrichmentProcessor = newChain(enrichmentProcessor);
+    ((MuleContextAware) this.enrichmentProcessor).setMuleContext(muleContext);
   }
 
   /**
