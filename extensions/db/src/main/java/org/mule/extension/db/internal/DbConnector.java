@@ -42,7 +42,7 @@ import java.util.List;
 @ConnectionProviders({DataSourceReferenceConnectionProvider.class, GenericConnectionProvider.class, DerbyConnectionProvider.class,
     MySqlConnectionProvider.class})
 @Xml(namespace = "db")
-@Export(classes = {StatementStreamingResultSetCloser.class, QueryDefinition.class, StoredProcedureCall.class,
+@Export(classes = {QueryDefinition.class, StoredProcedureCall.class,
     BulkQueryDefinition.class})
 public class DbConnector implements Initialisable {
 
