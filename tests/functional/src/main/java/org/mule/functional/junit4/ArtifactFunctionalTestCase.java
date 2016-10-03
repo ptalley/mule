@@ -7,8 +7,7 @@
 
 package org.mule.functional.junit4;
 
-import static java.util.Collections.emptyList;
-import static org.mule.runtime.core.config.bootstrap.ClassPathRegistryBootstrapDiscoverer.BOOTSTRAP_PROPERTIES;
+import static org.mule.runtime.core.config.bootstrap.ClassLoaderRegistryBootstrapDiscoverer.BOOTSTRAP_PROPERTIES;
 import static org.mule.test.runner.utils.AnnotationUtils.getAnnotationAttributeFrom;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.config.ConfigurationBuilder;
@@ -28,7 +27,6 @@ import org.mule.test.runner.api.IsolatedClassLoaderExtensionsManagerConfiguratio
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
