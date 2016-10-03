@@ -37,8 +37,7 @@ public class BootstrapServiceContextBuilder extends AbstractConfigurationBuilder
 
     List<BootstrapService> bootstrapServices = new LinkedList<>();
     bootstrapServices.addAll(propertiesBootstrapServiceDiscoverer.discover());
-    //TODO(pablo.kraan): bootstrap - is required to process app's bootstrap.properties?
-    //TODO(pablo.kraan): bootstrap - need a deployment test using a bootstrap from a plugin
+
     for (ArtifactPlugin artifactPlugin : artifactPlugins) {
       final URL localResource = artifactPlugin.getArtifactClassLoader().findResource(BOOTSTRAP_PROPERTIES);
 
@@ -51,13 +50,7 @@ public class BootstrapServiceContextBuilder extends AbstractConfigurationBuilder
       }
     }
 
-    BootstrapServiceDiscoverer bootstrapServiceDiscoverer = new BootstrapServiceDiscoverer() {
-
-      @Override
-      public List<BootstrapService> discover() {
-        return bootstrapServices;
-      }
-    };
+    BootstrapServiceDiscoverer bootstrapServiceDiscoverer = () -> bootstrapServices;
 
     muleContext.setBootstrapServiceDiscoverer(bootstrapServiceDiscoverer);
 
