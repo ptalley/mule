@@ -8,6 +8,7 @@
 package org.mule.runtime.module.deployment.internal.artifact;
 
 import static org.mule.runtime.core.config.bootstrap.ClassLoaderRegistryBootstrapDiscoverer.BOOTSTRAP_PROPERTIES;
+import static org.mule.runtime.core.util.Preconditions.checkArgument;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.config.bootstrap.BootstrapService;
 import org.mule.runtime.core.config.bootstrap.BootstrapServiceDiscoverer;
@@ -22,11 +23,24 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
-public class BootstrapServiceContextBuilder extends AbstractConfigurationBuilder {
+/**
+ * Configures a {@link BootstrapServiceDiscoverer} on an artifact's {@link MuleContext}
+ * <p/>
+ * Configuration done by this builder will use a {@link BootstrapServiceDiscoverer} to find {@link BootstrapService} provided by
+ * the container and will create a {@link BootstrapServiceDiscoverer} for each plugin deployed in the artifact. All the discovered
+ * services will then used to configure the context.
+ */
+public class ArtifactBootstrapServiceDiscovererContextBuilder extends AbstractConfigurationBuilder {
 
   private final List<ArtifactPlugin> artifactPlugins;
 
-  public BootstrapServiceContextBuilder(List<ArtifactPlugin> artifactPlugins) {
+  /**
+   * Creates a new context builder
+   *
+   * @param artifactPlugins artifact plugins deployed inside an artifact. Non null.
+   */
+  public ArtifactBootstrapServiceDiscovererContextBuilder(List<ArtifactPlugin> artifactPlugins) {
+    checkArgument(artifactPlugins != null, "ArtifactPlugins cannot be null");
     this.artifactPlugins = artifactPlugins;
   }
 
@@ -50,9 +64,6 @@ public class BootstrapServiceContextBuilder extends AbstractConfigurationBuilder
       }
     }
 
-    BootstrapServiceDiscoverer bootstrapServiceDiscoverer = () -> bootstrapServices;
-
-    muleContext.setBootstrapServiceDiscoverer(bootstrapServiceDiscoverer);
-
+    muleContext.setBootstrapServiceDiscoverer(() -> bootstrapServices);
   }
 }
