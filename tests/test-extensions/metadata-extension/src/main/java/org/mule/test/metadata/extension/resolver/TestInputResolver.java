@@ -6,24 +6,22 @@
  */
 package org.mule.test.metadata.extension.resolver;
 
-import static org.mule.metadata.api.model.MetadataFormat.JAVA;
-import org.mule.metadata.api.builder.BaseTypeBuilder;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.metadata.MetadataContext;
 import org.mule.runtime.api.metadata.MetadataResolvingException;
-import org.mule.runtime.api.metadata.resolving.OutputTypeResolver;
+import org.mule.runtime.api.metadata.resolving.InputTypeResolver;
 
-public class TestOutputAnyTypeResolver implements OutputTypeResolver<String> {
-
-  @Override
-  public MetadataType getOutputType(MetadataContext context, String key)
-      throws MetadataResolvingException, ConnectionException {
-    return BaseTypeBuilder.create(JAVA).anyType().build();
-  }
+public class TestInputResolver implements InputTypeResolver<String> {
 
   @Override
   public String getCategoryName() {
-    return "MetadataExtensionResolver";
+    return "TestResolvers";
+  }
+
+  @Override
+  public MetadataType getInputMetadata(MetadataContext context, String key)
+    throws MetadataResolvingException, ConnectionException {
+    return TestMetadataResolverUtils.getMetadata(key);
   }
 }

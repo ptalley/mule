@@ -10,7 +10,6 @@ import static java.lang.Integer.MAX_VALUE;
 import static org.mule.extension.http.internal.HttpConnector.OTHER_SETTINGS;
 import static org.mule.extension.http.internal.HttpConnector.URL_OVERRIDE_CONFIGURATION;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED;
-
 import org.mule.extension.http.api.HttpResponseAttributes;
 import org.mule.extension.http.api.HttpSendBodyMode;
 import org.mule.extension.http.api.HttpStreamingType;
@@ -22,12 +21,12 @@ import org.mule.extension.http.api.request.validator.SuccessStatusCodeValidator;
 import org.mule.extension.http.internal.HttpConnector;
 import org.mule.extension.http.internal.HttpMetadataResolver;
 import org.mule.extension.http.internal.request.validator.HttpRequesterConfig;
-import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.Event;
+import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.MuleException;
 import org.mule.runtime.core.construct.Flow;
 import org.mule.runtime.extension.api.annotation.metadata.MetadataKeyId;
-import org.mule.runtime.extension.api.annotation.metadata.MetadataScope;
+import org.mule.runtime.extension.api.annotation.metadata.OutputResolver;
 import org.mule.runtime.extension.api.annotation.param.Connection;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.UseConfig;
@@ -71,7 +70,7 @@ public class HttpRequestOperations {
    * @return an {@link OperationResult} with {@link HttpResponseAttributes}
    */
   @Summary("Executes a HTTP Request")
-  @MetadataScope(keysResolver = HttpMetadataResolver.class, outputResolver = HttpMetadataResolver.class)
+  @OutputResolver(HttpMetadataResolver.class)
   public OperationResult<Object, HttpResponseAttributes> request(String path, @Optional(defaultValue = "GET") String method,
                                                                  @Optional @Placement(tab = ADVANCED,
                                                                      group = URL_OVERRIDE_CONFIGURATION, order = 1) String host,
@@ -91,7 +90,8 @@ public class HttpRequestOperations {
                                                                  @Optional @Placement(tab = ADVANCED,
                                                                      group = "Status Code Settings") ResponseValidator responseValidator,
                                                                  @Optional HttpRequesterRequestBuilder requestBuilder,
-                                                                 @MetadataKeyId @Optional(defaultValue = "ANY") String outputType,
+                                                                 @MetadataKeyId(HttpMetadataResolver.class)
+                                                                   @Optional(defaultValue = "ANY") String outputType,
                                                                  @Connection HttpClient client,
                                                                  @UseConfig HttpRequesterConfig config, Event muleEvent)
       throws MuleException {

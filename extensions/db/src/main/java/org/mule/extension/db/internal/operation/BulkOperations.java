@@ -45,7 +45,6 @@ import static org.mule.extension.db.internal.domain.query.QueryType.UPDATE;
  *
  * @since 4.0
  */
-@MetadataScope(contentResolver = BaseDbMetadataResolver.class)
 public class BulkOperations extends BaseDbOperations {
 
   private BulkQueryResolver bulkQueryResolver = new BulkQueryResolver();
